@@ -1,0 +1,28 @@
+{
+  "name": "perfectpollie-data",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "serve": "vite preview",
+    "data:db": "node --no-warnings data/db.js",
+    "data:images:download": "node --no-warnings data/images/download.js",
+    "data:images:optimise": "node --no-warnings data/images/optimise.js",
+    "data:images:points": "node --no-warnings data/images/points.js"
+  },
+  "author": "theprojectsomething",
+  "license": "MIT",
+  "devDependencies": {
+    "@tensorflow/tfjs-core": "^3.16.0",
+    "@tensorflow/tfjs-node": "^3.16.0",
+    "@vladmandic/face-api": "^1.6.8",
+    "sass": "^1.43.5",
+    "sharp": "^0.30.4",
+    "vite": "^2.9.8",
+    "zlib": "^1.0.5"
+  },
+  "dependencies": {
+    "dom-to-image": "^2.6.0"
+  }
+}

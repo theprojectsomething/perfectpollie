@@ -1,0 +1,10 @@
+!*.secret
+.gitsecret/keys/random_seed
+.DS_Store
+data/credentials.json
+data/images/colab/results
+data/images/original
+data/images/models
+data/theyvoteforyou.key
+node_modules
+vite.config.local.js

@@ -1,0 +1,46 @@
+/* Breakpoints */
+$phone: 20em;
+$phone-phablet: 37.45em;
+$phablet: 37.5em;
+$phablet-tablet: 47.95em;
+$tablet: 48em;
+$tablet-laptop: 64.05em;
+$laptop: 64.0625em;
+$laptop-desktop: 105.05em;
+$desktop: 105.0625em;
+
+.min-phablet {
+  display: none;
+  @media (min-width: $phone-phablet) { display: initial; }
+}
+
+.min-tablet {
+  display: none;
+  @media (min-width: $phablet-tablet) { display: initial; }
+}
+
+.min-laptop {
+  display: none;
+  @media (min-width: $tablet-laptop) { display: initial; }
+}
+
+.min-desktop {
+  display: none;
+  @media (min-width: $laptop-desktop) { display: initial; }
+}
+
+.max-phone {
+  @media (min-width: $phone-phablet) { display: none; }
+}
+
+.max-phablet {
+  @media (min-width: $phablet-tablet) { display: none; }
+}
+
+.max-tablet {
+  @media (min-width: $tablet-laptop) { display: none; }
+}
+
+.max-laptop {
+  @media (min-width: $laptop-desktop) { display: none; }
+}

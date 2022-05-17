@@ -1,0 +1,353 @@
+%button {
+  border-radius: 1.5em;
+  background: transparent;
+  border: 0;
+  font-weight: 500;
+  line-height: 1;
+  min-width: 3em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.2s box-shadow;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Poppins, sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 1.1em;
+  z-index: 0;
+
+  &:disabled,
+  &.c-button--disabled {
+    pointer-events: none;
+    opacity: 0.75;
+    box-shadow: none;
+  }
+
+  &.c-button--shadow {
+    &.c-button--outline {
+      background-color: rgba($white, 0.25);
+
+      &:not(:disabled) {
+        &:hover,
+        &:focus html[data-whatinput="keyboard"] & {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+}
+
+%button--outline:not(:hover):not(:focus),
+%button--outline-over:hover,
+%button--outline-over:focus,
+%button--outline-all {
+  &:not(:disabled):not(.c-button--toggle)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px currentColor;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.c-button--shadow {
+  &.c-button--outline {
+    background-color: rgba($white, 0.25);
+  }
+}
+
+%button--opaque-over {
+  &:hover,
+  &:focus html[data-whatinput="keyboard"] & {
+    z-index: 0;
+    
+    &:not(:disabled):not(.c-button--toggle)::after {
+      background: $white;
+      box-shadow: none;
+      z-index: -1;
+    }
+  }
+}
+
+
+.c-button {
+  @extend %button;
+
+  &:not(:disabled) {
+    &:not(.c-button--has-input) {
+      &:active,
+      &:hover,
+      &:focus html[data-whatinput="keyboard"] & {
+        @extend %button--outline-all;
+        color: inherit;
+        background-color: inherit;
+
+        &.c-button--custom-bg {
+          background-color: inherit !important;  
+        }
+
+        &.c-button--custom-text {
+          color: inherit !important;  
+        }
+      }
+    }
+
+    
+
+    &:hover,
+    &:focus html[data-whatinput="keyboard"] & {
+      box-shadow: 0 0.25em 0.5em rgba($black, 0.25);
+    }
+
+    &:active,
+    &[data-copied="1"] {
+      box-shadow: inset 0 0.125em 0.25em rgba($black, 0.25),
+                  inset 0 0 0 2em rgba($white, 0.1);
+    }
+  }
+}
+
+.c-button--outline { @extend %button--outline; }
+.c-button--outline-over { @extend %button--outline-over; }
+.c-button--outline-all { @extend %button--outline-all; }
+.c-button--opaque-over { @extend %button--opaque-over; }
+
+.c-button--simple {
+  @extend %button;
+  color: $grey;
+  opacity: 0.8;
+
+  &:not(:disabled) {
+    &:active,
+    &:hover,
+    &:focus html[data-whatinput="keyboard"] & {
+      color: $white;
+      opacity: 1;
+    }
+  }
+}
+
+
+.c-button--text {
+  min-width: 12.5em;
+  padding: 0 1.5em;
+  line-height: 3em;
+
+  .o-icon {
+    margin: 0 -0.5em 0 0.5em;
+  }
+}
+
+.c-button--video {
+  min-width: auto;
+  padding: 0;
+  line-height: 1em;
+  border-radius: 0;
+  white-space: normal;
+}
+
+.c-button--icon {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  padding: 0;
+  text-align: center;
+  padding: 0.6em;
+
+  .o-icon {
+    font-size: 1.6em;
+    fill: currentColor;
+  }
+}
+
+.c-button--has-icon,
+.c-button--has-input {
+  padding: 0 1.5em;
+  position: relative;
+  box-shadow: none;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 3rem;
+}
+
+.c-button--has-icon {
+  .o-icon {
+    align-self: center;
+    font-size: 1.3em;
+    margin-right: 0.25em;
+    flex: 0 0 auto;
+    vertical-align: text-bottom;
+
+    &:last-child:not(:first-child) {
+      margin-right: 0;
+      margin-left: 0.25em;
+    }
+  }
+}
+
+.c-button--has-input {
+  padding: 0 1em;
+
+  input {
+    margin: 0 0.75em 0 0;
+  }
+
+  &[class*="--x"] {
+    input {
+      transform: none;
+    }
+  }
+
+  &:not([data-toggle]) {
+    background: transparent;
+  }
+}
+
+
+/* Sizes ------------------------------- */
+
+.c-button--xxxs {
+  font-size: 10px;
+  min-width: 3rem;
+  line-height: 2.4em;
+  padding: 0 1.5em;
+}
+
+.c-button--xxs {
+  line-height: 2em;
+  font-size: 0.775em;
+  min-width: 3rem;
+  padding: 0 1em;
+}
+
+.c-button--xs {
+  min-width: 7.2rem;
+  font-size: 11px;
+  padding: 0 2em;
+  line-height: 3em;
+}
+
+.c-button--small-alt {
+  line-height: 2.5em;
+  min-width: 10em;
+  padding: 0 1.5em;
+}
+
+.c-button--small {
+  line-height: 2.5em;
+}
+
+
+/* Colors ------------------------------ */
+
+.c-button--primary {
+  @extend %button--outline;
+  color: $primary;
+
+  &.c-button--outline {
+    background-color: transparent;
+    color: $primary;
+  }
+}
+
+.c-button--secondary {
+  background-color: $secondary;
+  color: $primary;
+
+  &.c-button--outline {
+    background-color: transparent;
+    color: $secondary;
+  }
+}
+
+.c-button--tertiary {
+  @extend %button--outline;
+  color: $tertiary;
+}
+
+
+.c-button--toggle {
+  display: flex;
+  align-items: center;
+  position: relative;
+  line-height: 1em;
+  padding: 0;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 2.2em;
+    height: 1.3em;
+    background: rgba($black, 0.4);
+    vertical-align: middle;
+    border-radius: inherit;
+    margin: 0 0.5em 0 0;
+  }
+
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background: rgba($white, 0.4);
+    vertical-align: middle;
+    border-radius: inherit;
+    position: absolute;
+    top: 50%;
+    left: 1.1em;
+    transform: translate(-50%, -50%) translateX(40%);
+    transition: 0.2s transform;
+  }
+
+  &[data-on] {
+    &::after {
+      background: $white;
+      transform: translate(-50%, -50%) translateX(-40%);
+    }
+  }
+
+  span {
+    border-bottom: 1px dotted transparent;
+  }
+
+  &:not(:disabled) {
+    &:hover,
+    &:focus html[data-whatinput="keyboard"] & {
+      box-shadow: none;
+     
+      span {
+        border-bottom-color: inherit;
+      }
+    }
+  }
+
+  input {
+    @extend .u-visually-hidden;
+  }
+}
+
+.c-button--square,
+.c-button--rect {
+  border-radius: 0;
+
+  .o-icon {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+.c-button--square {
+  width: 3em;
+  height: 3em;
+}

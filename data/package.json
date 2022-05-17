@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "scripts": {
+    "db": "node --no-warnings db.js",
+    "images:download": "node --no-warnings images/download.js",
+    "images:optimise": "node --no-warnings images/optimise.js",
+    "images:points": "node --no-warnings images/points.js"
+  },
+  "devDependencies": {
+    "@vladmandic/face-api": "^1.6.8"
+  }
+}

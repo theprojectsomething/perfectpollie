@@ -1,0 +1,32 @@
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid $grey;
+  padding: 0;
+
+
+  /* Spacing ------------------------------- */
+
+  .c-section--small & {
+    @include fluid-type(margin-bottom margin-top, 22.857142857em, 57.777777778em, 2em, 4em);
+  }
+
+  .c-section--medium & {
+    @include fluid-type(margin-bottom margin-top, 22.857142857em, 57.777777778em, 2em, 6em);
+  }
+
+  .c-section--large & {
+    @include fluid-type(margin-bottom margin-top, 22.857142857em, 57.777777778em, 4em, 8em);
+  }
+
+
+  /* Color ------------------------------- */
+
+  .c-section--alternative &,
+  .c-section--gray &,
+  .c-section--highlight &,
+  .c-section--inverse & {
+    border-color: $white;
+  }
+}
