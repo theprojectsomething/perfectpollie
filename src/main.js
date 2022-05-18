@@ -22,6 +22,21 @@ const coalitionParties = new Map([
   ['Country Liberal Party', 'Liberal-National Coalition']
 ]);
 
+// const getFactorial = (n, useBigInt, r = 1) => {
+//   const usingBigInt = useBigInt || n > 18;
+//   let n0 = usingBigInt ? BigInt(n) : n;
+//   let r0 = usingBigInt ? BigInt(r) : r;
+//   while (n0) r0 *= n0--;
+//   return useBigInt || !usingBigInt ? r0 : r0.toString();
+// }
+
+// // non-repeating permutations = n! / (n-r)!
+// const getPermutations = (items, itemsPerPermutation, useBigInt) => {
+//   const usingBigInt = useBigInt || items > 18;
+//   const permutations = getFactorial(items, usingBigInt) / getFactorial(items - itemsPerPermutation, usingBigInt);
+//   return useBigInt || !usingBigInt ? permutations : 2n ** 53n < permutations && permutations.toString() || Number(permutations);
+// }
+
 const DEBUG = false;
 
 // comment out to enable console!
@@ -38,6 +53,7 @@ const loadDB = async () => {
   const policies = new Map(Object.entries(raw.policies));
   const parties = new Map();
 
+  // const permutations = getPermutations(people.size, 4).toLocaleString();
   const names = new Map();
   for (const [id, person] of people) {
     // allow for double-barreled names
@@ -115,6 +131,7 @@ const loadDB = async () => {
   console.log('PARTIES', parties);
 
   return {
+    permutations: '2,495,102,400',
     names,
     ids,
     people,
@@ -658,6 +675,13 @@ const renderImage = async (isSafariTimeWasting) => {
   return dataUrl;
 }
 
+for (const $hint of document.querySelectorAll('[data-hint]')) {
+  const type = $hint.dataset.hint === 'over' ? 'pointerover' : 'click';
+  $hint.addEventListener(type, () => {
+    delete $hint.dataset.hint;
+  }, { once: true });
+}
+
 const $image = document.querySelector('.image');
 
 document.querySelector('.copy').addEventListener('click', () => {
@@ -676,6 +700,7 @@ document.querySelector('.save').addEventListener('click', async () => {
     link.click();
 });
 
+
 if (DEBUG) {
   document.body.dataset.debug = true;
 }
@@ -683,6 +708,10 @@ if (DEBUG) {
 let db;
 const init = async () => {
   db = await loadDB();
+  const $combos = document.querySelector('.combos');
+  if ($combos) {
+    $combos.innerText = db.permutations;
+  }
   const urlIds = urlParseIds(location.pathname);
   refresh(urlIds);
 }

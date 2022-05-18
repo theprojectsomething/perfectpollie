@@ -26,12 +26,12 @@
 
     <script>try{delete document.documentElement.dataset.noscript;}catch(e){}</script>
 
-    <title>Perfect 💔 Pollie</title>
+    <title>Perfect ❤ Pollie</title>
   </head>
   <body>
     <script type="module" src="/src/main.js"></script>
     <div id="i-get-it-now">
-      <div class="image-wrap">
+      <div class="image-wrap" data-hint="over">
         <div class="image">
           <ol class="partials" data-alt="1" style="transform: translateY(0%);">
             <li>
@@ -39,14 +39,14 @@
                 <div class="partial-outer">
                   <div class="partial-inner" style="transform: scaleX(-1);">
                     <div class="partial-wrap" style="transform: translate(-1.55614%, -4.25%) scale(1.07794) rotate(0.0378198rad); transform-origin: 31.6% 45.5% 0px;">
-                      <img class="partial-image" src="">
+                      <img class="partial-image">
                     </div>
                   </div>
                 </div>
               </div>
               <aside class="info" data-party="pauline-hansons-one-nation-party">
                 <figure class="info-inner">
-                  <img src="https://localhost:10443/assets/people/10280-sm.webp">
+                  <img>
                   <figcaption>
                     <strong class="name">Pauline Hanson</strong>
                     <small class="role">Senator for Queensland</small>
@@ -70,14 +70,14 @@
                 <div class="partial-outer">
                   <div class="partial-inner" style="">
                     <div class="partial-wrap" style="transform: translate(1.80042%, -2.65%) scale(0.93394) rotate(0.00235849rad); transform-origin: 28.4% 43.9% 0px;">
-                      <img class="partial-image" src="">
+                      <img class="partial-image">
                     </div>
                   </div>
                 </div>
               </div>
               <aside class="info" data-party="liberal-party">
                 <figure class="info-inner">
-                  <img src="https://localhost:10443/assets/people/10468-sm.webp">
+                  <img>
                   <figcaption>
                     <strong class="name">Scott Morrison</strong>
                     <small class="role">Representative for Cook</small>
@@ -101,14 +101,14 @@
                 <div class="partial-outer">
                   <div class="partial-inner" style="transform: scaleX(-1);">
                     <div class="partial-wrap" style="transform: translate(4.05564%, 2.55%) scale(0.95017) rotate(-0.0294755rad); transform-origin: 26.6% 38.7% 0px;">
-                      <img class="partial-image" src="">
+                      <img class="partial-image">
                     </div>
                   </div>
                 </div>
               </div>
               <aside class="info" data-party="australian-labor-party">
                 <figure class="info-inner">
-                  <img src="https://localhost:10443/assets/people/10007-sm.webp">
+                  <img>
                   <figcaption>
                     <strong class="name">Anthony Albanese</strong>
                     <small class="role">Representative for Grayndler</small>
@@ -132,14 +132,14 @@
                 <div class="partial-outer">
                   <div class="partial-inner" style="transform: scaleX(-1);">
                     <div class="partial-wrap" style="transform: translate(11.891%, 0.15%) scale(1.00603) rotate(-0.0111727rad); transform-origin: 20.1% 41.1% 0px;">
-                      <img class="partial-image" src="">
+                      <img class="partial-image">
                     </div>
                   </div>
                 </div>
               </div>
               <aside class="info" data-party="australian-greens">
                 <figure class="info-inner">
-                  <img src="https://localhost:10443/assets/people/10734-sm.webp">
+                  <img>
                   <figcaption>
                     <strong class="name">Adam Bandt</strong>
                     <small class="role">Representative for Melbourne</small>
@@ -159,7 +159,7 @@
               </aside>
             </li>
           </ol>
-          <h2 class="title pollie">Pauline "the Scott" Anthony-Adam</h2>
+          <h2 class="image-title pollie">Pauline "the Scott" Anthony-Adam</h2>
           <div class="image-logo"><span>Perfect</span> 💔 <span>Pollie</span></div>
           <ul class="alignment">
             <li data-party="Australian Greens" data-txt="grn" data-percent="30" data-total="6" style="width: 29.4118%; order: 30;" data-score="20"></li>
@@ -169,19 +169,22 @@
           </ul>
         </div>
       </div>
-      <div class="actions">
-        <a href="#what-what-what" aria-label="Err what?!">🤯</a>
-        <a class="twitter" target="_blank" href="https://twitter.com/intent/tweet?text=Pauline+%22the+Scott%22+Anthony-Adam+is+truly+the+Perfect+%E2%9D%A4%EF%B8%8F+Pollie&amp;url=https%3A%2F%2Flocalhost%3A10443%2F11%2Fpauline-scott-anthony-adam" aria-label="Share on twitter"><span>t</span></a>
-        <a class="email" target="_blank" href="mailto:?subject=found%20the%20the%20perfect%20pollie&amp;body=Hey%20I%20found%20the%20the%20Perfect%20Pollie%20-%0A%0Ahttps%3A%2F%2Flocalhost%3A10443%2F11%2Fpauline-scott-anthony-adam%0A%0ALove%20ya%20guts!" aria-label="Share via email"><span>💌</span></a>
-        <button class="copy" aria-label="Copy link"><span>📎</span></button>
-        <button class="save" aria-label="Save a photo"><span>📸</span></button>
-      </div>
-      <p class="description"><i>Pauline "the Scott" Anthony-Adam</i> has the look, but doesn't have any <a href="#big-ticket-policies">big ticket policies</a> … despite enjoying an (admittedly questionable) alignment with all the major parties, topped off with measly pinch of bizarre otherness.</p>
-      <label for="btn-refresh"><small>Tap to re-pollinate</small></label>
-      <button id="btn-refresh" class="btn-refresh">
+      <h1 class="title pollie">Pauline "the Scott" Anthony-Adam</h1>
+
+      <!-- <label for="btn-refresh"><small>Tap to re-pollinate</small></label> -->
+      <button id="btn-refresh" class="btn-refresh" aria-label="Pollinate a new pollie!" data-hint>
         <span>Perfect</span> <span class="icon"></span> <span>Pollie</span>
       </button>
+      
+      <p class="description"><i>Pauline "the Scott" Anthony-Adam</i> has the look, but doesn't have any <a href="#big-ticket-policies">big ticket policies</a> … despite enjoying an (admittedly questionable) alignment with all the major parties, topped off with measly pinch of bizarre otherness.</p>
 
+      <div class="actions" data-hint="over">
+        <a class="email" target="_blank" href="mailto:?subject=found%20the%20the%20perfect%20pollie&amp;body=Hey%20I%20found%20the%20the%20Perfect%20Pollie%20-%0A%0Ahttps%3A%2F%2Flocalhost%3A10443%2F11%2Fpauline-scott-anthony-adam%0A%0ALove%20ya%20guts!" aria-label="Share via email"><span>💌</span></a>
+        <a class="twitter" target="_blank" href="https://twitter.com/intent/tweet?text=Pauline+%22the+Scott%22+Anthony-Adam+is+truly+the+Perfect+%E2%9D%A4%EF%B8%8F+Pollie&amp;url=https%3A%2F%2Flocalhost%3A10443%2F11%2Fpauline-scott-anthony-adam" aria-label="Share on twitter"><span>t</span></a>
+        <button class="save" aria-label="Snapshot"><span>📸</span></button>
+        <button class="copy" aria-label="Copy link"><span>📎</span></button>
+        <a class="what" href="#what-what-what" aria-label="please explain"><span>?</span></a>
+      </div>
 
       <div class="alignment-footer">
         <ul class="alignment">
@@ -378,28 +381,29 @@
     </div>
 
     <section class="what-what-what">
-      <h2 id="what-what-what">I don't get it. Explain it to me.</h2>
+      <h2 id="what-what-what">I don't get it. Please explain.</h2>
       <ul>
-        <li>It's just a face mashup, backed up by a sprinkle of <a href="https://theyvoteforyou.org.au/help/data">real data</a>.</li>
-        <li>It's fun because the faces look silly, but you also get a little bit of insight into what the politicians and parties are about. It's also less shouty than question time.</li>
-        <li>It's pretty lo-fi, but we can boast that we used AI (AI!) to get the faces to match .. and some other stuff we won't boast about. The code is <a href="https://github.com/theprojectsomething/perfectpollie" title="Careful, it's still a mess">open source</a>.</li>
-        <li>How do the numbers work? On this site we're only interested in consistent voting, so at an individual level we're looking at the policies that have been voted on the same way, every time. Yes shortfalls / but simplicity.</li>
-        <li>We compare the policies and vote (yay or nay) from each of our selected politicians and compile a list of policies that all who voted agree on.</li>
-        <li>"Big ticket" policies are those that all four voted on and agreed on, the same way, every time.</li>
-        <li>"Strongly held" policies have at least three people voting and agreeing (the other person didn't vote at all).</li>
-        <li>"Weakly held" policies have only one or two people agreeing and consistently voting. The missing people haven't voted on this policy so we don't know how they feel.</li>
-        <li>Finally, for our party comparisons we check for a simple majority on each policy. If our individual's vote goes the same way we summise that they are voting with the party (regardless of their actual party).</li>
-        <li>You can find a lot more ins and outs of the voting system (that's the one behind our system) on the <a href="https://theyvoteforyou.org.au/help/data">They Vote for You</a> website, which includes sordid details of how votes are recorded and weighed (it's complicated!)</li>
-        <li>This *thing* is a work-in-progress and we're constantly improving. So yes, expect mistakes. Many, many mistakes.</li>
+        <li><strong>It's just a face mashup</strong>, backed up by a sprinkle of <a href="https://theyvoteforyou.org.au/help/data">real data</a>. There are currently <strong class="combos">2,495,102,400</strong> possible combinations (that's billions), so the face / pollie you're looking at is probably unique.</li>
+        <li><strong>It's fun 🎉 because the frankenstein pollies look ridiculous</strong>, and because you get a little bit of insight into what the politicians and parties are about. It's also less shouty than question time (or any political communication for that matter). The intention is to educate the public, raise awareness and encourage debate.</li>
+        <li>How do the numbers work? <strong>On this site we're only interested in <em>consistent</em> voting</strong>, so at an individual level we're looking at the policies that have been voted on the same way, every time. Yes shortfalls / but also simplicity.</li>
+        <li><strong>We compare the policies and the vote</strong> from each of our selected politicians (a yay or nay) and compile a list of policies that all (who voted) agree on:
+          <ol>
+            <li>"Big ticket" policies are those that all four voted on and agreed on. The same vote on every division, every time.</li>
+            <li>"Strongly held" policies have at least three people voting and agreeing (the other person didn't vote at all).</li>
+            <li>"Weakly held" policies have only one or two people agreeing and consistently voting. The missing people haven't voted on this policy so we don't know how they feel.</li>
+          </ol>
+        </li>
+        <li>Finally, <strong>for party comparisons we check for a simple majority on each policy</strong>. If our individual's vote goes the same way we summise that they are voting with the party (regardless of their actual party).</li>
+        <li>You can find a lot more ins and outs of the vote-counting system (that's the one behind our system) on the <a href="https://theyvoteforyou.org.au/help/data">They Vote for You</a> website, which is our data source and provides all the sordid details of how votes are recorded and weighed (it's complicated!)</li>
+        <li>Technology-wise it's all pretty lo-fi, but we can boast that we used <strong>AI (AI!)(🤖!)</strong> to get the faces to match .. and some other stuff we won't boast about. The <a href="/db.json">data</a> is reproduced under the <a href="https://opendatacommons.org/licenses/odbl/summary/" title="Open Data Commons Open Database License">ODbL</a>. The code is <a href="https://github.com/theprojectsomething/perfectpollie" title="Careful, it's still a mess">open source</a>.</li>
+        <li>Oh, and it's a work-in-progress and constantly improving. So yes, expect mistakes. Many, many mistakes.</li>
         <li>If you've got any great ideas or fabulous concerns please get in touch (hello@) or via <a href="https://github.com/theprojectsomething/perfectpollie">github</a>.</li>
       </ul>
       <div class="footer">
-        <a href="#i-get-it-now" aria-label="Gotcha 👍">👍</a>
+        <a href="#i-get-it-now" aria-label="Gotcha 👍"><span>👍</span></a>
       </div>
     </section>
-    <div class="help">
-        <a href="#what-what-what" aria-label="???!">🤯</a>
-    </div>
+
     <footer>
       <p>Parliamentary data is reproduced under an <a href="https://opendatacommons.org/licenses/odbl/">Open Data Commons Open Database License</a>. Thanks goes to the wonderful people at <a href="https://theyvoteforyou.org.au">theyvoteforyou.org.au</a> and their supurb <a href="https://theyvoteforyou.org.au/help/data">API</a>.</p>
 

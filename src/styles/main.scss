@@ -52,6 +52,38 @@ h2, h3 {
   align-items:  center;
   justify-content:  center;
   min-height: 100vh;
+  margin-bottom: 3em;
+
+  @media (max-aspect-ratio: 0.75) {
+    // height: calc(100vh - 55px);
+    // min-height: calc(100vh - 10em);
+    margin-top: -3em;
+  }
+}
+
+@keyframes hint-image {
+  to {
+    transform: translate(-50%, -100%);
+  }
+}
+
+.image-wrap {
+  position: relative;
+
+  &[data-hint]:not(:hover)::before {
+    content: "👇";
+    display: block;
+    border-radius: 0.2em;
+    position: absolute;
+    left: 50%;
+    top: 0.8em;
+    font-size: 2.24em;
+    white-space: nowrap;
+    transform: translate(-50%, -120%);
+    pointer-events: none;
+    animation: hint-image 1s 0.25s alternate infinite;
+    z-index: 1;
+  }
 }
 
 .image {
@@ -66,12 +98,14 @@ h2, h3 {
     box-shadow: inset 0 0 0 1em;
   }
 
-  .title {
+  .image-title {
     text-align: center;
     padding: 0.8em 1em;
     line-height: 1;
     font-size: 1.1em;
     font-weight: bold;
+    z-index: -1;
+    position: relative;
 
     body[data-debug] & {
       background:  #fff;
@@ -508,8 +542,37 @@ h2, h3 {
 .alignment-footer {
   position: absolute;
   width: 100%;
-  top: calc(100vh - 4em);
+  top: calc(100vh - 1em);
   left: 0;
+
+  @media (max-aspect-ratio: 0.75) {
+    top: calc(100vh - 1em - 55px);
+    // min-height: calc(100vh - 10em);
+
+  }
+
+  &::before {
+    content: 'Major party alignment';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 0.8em;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    border-radius: 0.2em;
+    padding: 0.6em 1em;
+    background: var(--white-light);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    right: 0;
+    border-bottom: 1px dashed #fffa;
+    pointer-events: none;
+  }
 }
   // margin-right: 1.6em;
 
@@ -538,6 +601,8 @@ h2, h3 {
   // transition: 0.6s 0.2s width;
   // visibility: hidden;
   // opacity: 0;
+
+
 
 
   .partials li:active &,
@@ -594,10 +659,12 @@ h2, h3 {
         color: #fffa;
         // content: attr(data-txt) ' ' attr(data-percent) '%';
         content: attr(data-total);
+        content: attr(data-total) ' policies';
+        content: attr(data-percent) '% ' attr(data-txt);
         text-transform: uppercase;
         position: absolute;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -100%);
         font-size: 0.8em;
         font-weight: 600;
         top: 50%;
@@ -605,7 +672,7 @@ h2, h3 {
       }
 
       &[data-primary]::before {
-        content: attr(data-total) ' agreed policies';
+        // content: attr(data-total) ' policies';
       }
 
       &:hover {
@@ -633,17 +700,29 @@ h2, h3 {
         }
       }
 
-
-      &[data-percent^="1"],
-      &[data-percent="2"],
-      &[data-percent="3"],
-      &[data-percent="4"],
-      &[data-percent="5"],
       &[data-percent="6"],
       &[data-percent="7"],
       &[data-percent="8"],
       &[data-percent="9"],
-      &[data-percent="2"] {
+      &[data-percent^="1"] {
+        &:not([data-percent="1"])::before {
+          content: attr(data-percent) '%';
+        }
+
+        &::after {
+          text-align: right;
+          transform: translateX(1em) translate(-100%, -110%);
+        }
+      }
+
+      &[data-percent="2"],
+      &[data-percent="3"],
+      &[data-percent="4"],
+      &[data-percent="5"] {
+        &::before {
+          display: none;
+        }
+
         &::after {
           text-align: right;
           transform: translateX(1em) translate(-100%, -110%);
@@ -665,6 +744,15 @@ h2, h3 {
   }
 }
 
+.title {
+  text-align: center;
+  padding: 0 1em 0.8em;
+  line-height: 1;
+  font-size: 1.6em;
+  font-weight: bold;
+  margin: -2.2em 0 1em;
+  z-index: 1;
+}
 
 .description {
   width: 67vh;
@@ -677,7 +765,33 @@ h2, h3 {
   max-width: 100%;
 }
 
+@keyframes hint-button {
+  to {
+    transform: translate(120%, -50%);
+  }
+}
+
+.actions,
 .btn-refresh {
+  position: relative;
+
+  &[data-hint]:not(:hover)::before {
+    content: "👈";
+    display: block;
+    border-radius: 0.2em;
+    position: absolute;
+    right: -0.3em;
+    top: 50%;
+    font-size: 1.4em;
+    white-space: nowrap;
+    transform: translate(100%, -50%);
+    pointer-events: none;
+    animation: hint-button 1s alternate infinite;
+  }
+}
+
+.btn-refresh {
+  position: relative;
   margin: 1em;
   padding: 0.8em 1em 0.7em;
   line-height: 1em;
@@ -687,21 +801,16 @@ h2, h3 {
   max-width: 90vw;
   width: 34vh;
   text-align: center;
-  // background: var(--for-lightest);
-  // background: linear-gradient(-45deg, var(--against) 0 47.5%, var(--for) 47.5% 100%);
   background: linear-gradient(-45deg, var(--against-lightest) 0 48.5%, #fff 48.5% 49.5%, var(--for-lightest) 49.5% 100%);
-  font-family: monospace;
   text-transform: capitalize;
   letter-spacing: 0.15em;
-  border:  none;
-  // box-shadow: 0em 0em 0.2em var(--black-light),
-  //             0.2em 0.2em 0.4em var(--black-light);
-
   border: 1px solid transparent;
-  box-shadow: 
-        // 0em 0em 0.6em var(--for-lightest),
-        inset 1px 1px 0 #fffc,
-        inset -1px -1px 0 var(--for-lightest);
+  box-shadow: inset 1px 1px 0 #fffc,
+              inset -1px -1px 0 var(--for-lightest);
+
+  @media (max-aspect-ratio: 0.75) {
+    margin: 0em 1em;
+  }
 
   span {
     &:first-child {
@@ -736,6 +845,28 @@ h2, h3 {
 
   &:hover {
     background: linear-gradient(-45deg, var(--against-lighter) 0 48.5%, #fff 48.5% 49.5%, var(--for-lighter) 49.5% 100%);
+
+    &::after {
+      background: var(--white-light);
+      border-radius: 0.2em;
+      border: 1px solid var(--black-light);
+      color: var(--black);
+      content: attr(aria-label) '\A▾';
+      display: block;
+      font-size: 0.5em;
+      font-weight: 400;
+      letter-spacing: initial;
+      height: 3.4em;
+      left: 50%;
+      line-height: 2.2em;
+      padding: 0.6em 1em;
+      position: absolute;
+      text-align: center;
+      text-transform: none;
+      top: -1em;
+      transform: translate(-50%, -110%);
+      white-space: pre;
+    }
     
     &:not(:active) .icon {
       transform: scale(1.8);
@@ -789,7 +920,7 @@ label[for="btn-refresh"] {
 
   button, a {
     position: relative;
-    width: 3.2em;
+    width: 3.6em;
     border-radius: 50%;
     border: none;
     background: var(--for-lightest);
@@ -803,7 +934,7 @@ label[for="btn-refresh"] {
                 inset -1px -1px 0 var(--for-lightest);
 
     span {
-      font-size: 1.4em;
+      font-size: 1.8em;
     }
 
     &:active {
@@ -853,6 +984,7 @@ label[for="btn-refresh"] {
     }
   }
 
+  .what,
   .twitter {
     span {
       font-weight: 600;
@@ -864,6 +996,17 @@ label[for="btn-refresh"] {
       font-size: 2em;
       text-shadow: 0 0 1px var(--for);
     }
+  }
+}
+
+.actions {
+  &[data-hint]:not(:hover)::before {
+    animation-delay: -1s;
+    font-size: 2.24em;
+  }
+
+  @media (max-aspect-ratio: 0.75) {
+    margin-top: 0;
   }
 }
 
@@ -1008,10 +1151,18 @@ label[for="btn-refresh"] {
     font-size: 0.8em;
     text-align: left;
     margin-bottom: 1em;
+
+    ol, ul {
+      margin: 0.8em 1.8em;
+    }
   }
 
-  li {
-    margin-bottom: 0.4em;
+  ol {
+    list-style: initial;
+  }
+
+  li:not(:last-child) {
+    margin-bottom: 0.8em;
   }
 
   a small {
