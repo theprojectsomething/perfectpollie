@@ -1,6 +1,7 @@
 !*.secret
 .gitsecret/keys/random_seed
 .DS_Store
+cloudflare
 data/credentials.json
 data/images/colab/results
 data/images/original

@@ -2,6 +2,7 @@ import "@/styles/global.scss"
 import "@/styles/main.scss"
 
 import domtoimage from 'dom-to-image'
+import { saveAs } from 'file-saver'
 
 const gooduns = [
   '#david-the-tony-tony-joanne',
@@ -497,7 +498,6 @@ const listJoinAnd = (list) => {
 }
 
 
-const $policiesBigTicket = document.querySelector('.policies-bigticket');
 const $policiesForBigTicket = document.querySelector('.policies-for-bigticket');
 const $policiesForMajor = document.querySelector('.policies-for-major');
 const $policiesFor = document.querySelector('.policies-for');
@@ -641,15 +641,17 @@ const renderPolicies = (policies) => {
 
   const policiesForOther = [].concat(policiesForCounts.get(2) || [], policiesForCounts.get(1) || []);
   const policiesAgainstOther = [].concat(policiesAgainstCounts.get(2) || [], policiesAgainstCounts.get(1) || []);
-  const bigTicketCount = (policiesForCounts.get(4)?.length ?? 0) + (policiesAgainstCounts.get(4)?.length ?? 0);
+  const bigTicketList = (policiesForCounts.get(4) || []).concat(policiesAgainstCounts.get(4) || []);
+  const bigTicketCount = bigTicketList.length;
+  const majorList = (policiesForCounts.get(3) || []).concat(policiesAgainstCounts.get(3) || []);
+  const minorList = policiesForOther.concat(policiesAgainstOther);
 
-  $policiesBigTicket.dataset.total = bigTicketCount;
-  $policiesForBigTicket.innerHTML = (policiesForCounts.get(4) || []).join('')
-    + (policiesAgainstCounts.get(4) || []).join('');
-  $policiesForMajor.innerHTML = (policiesForCounts.get(3) || []).join('')
-    + (policiesAgainstCounts.get(3) || []).join('');
-  $policiesFor.innerHTML = policiesForOther.join('')
-    + policiesAgainstOther.join('');
+  $policiesForBigTicket.innerHTML = bigTicketList.join('');
+  $policiesForBigTicket.parentElement.dataset.total = bigTicketCount;
+  $policiesForMajor.innerHTML = majorList.join('');
+  $policiesForMajor.parentElement.dataset.total = majorList.length;
+  $policiesFor.innerHTML = minorList.join('');
+  $policiesFor.parentElement.dataset.total = minorList.length;
 
   const majorPartyOther = alignmentMajor.get('Other');
   const alignedAll = majorPartiesOver25.length === majorParties.size;
@@ -709,6 +711,10 @@ const isIOS = [
   // iPad on iOS 13 detection
   || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 
+if (isIOS) {
+  document.body.dataset.ios = 1;
+}
+
 const renderImage = async (isSafariTimeWasting) => {
   const outputScale = 600 * (1 + 1 / 37.5 * 2 * 1.35) /  $image.offsetWidth;
   const dataUrl = await domtoimage.toJpeg($image, {
@@ -745,21 +751,9 @@ document.querySelector('.copy').addEventListener('click', () => {
 })
 
 document.querySelector('.save').addEventListener('click', async () => {
-  // if iOS device let's work around the weird download fun
-  const popup = isIOS && window.open('about:blank', '_blank');
-
   const dataUrl = await renderImage();
-  // const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
-  // window.open(objectUrl);
-  if (popup) {
-    popup.location.href = dataUrl;
-  } else {
-    const link = document.createElement('a');
-    link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
-    link.href = dataUrl;
-    link.click();
-  }
-  // URL.revokeObjectURL(objectUrl);
+  const title = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
+  saveAs(dataUrl, title);
 });
 
 

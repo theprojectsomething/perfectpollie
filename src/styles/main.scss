@@ -54,15 +54,20 @@ h2, h3 {
   min-height: 100vh;
   margin-bottom: 3em;
 
-  @media (max-aspect-ratio: 0.75) {
-    // height: calc(100vh - 55px);
-    // min-height: calc(100vh - 10em);
+  @media (max-aspect-ratio: 3/4) {
     margin: -3em 0 0;
+
+    body[data-ios] & {
+      margin-top: calc(-3em - 10px);
+    }    
   }
 }
 
 @keyframes hint-image {
-  to {
+  85% {
+    transform: translate(-50%, -120%);
+  }
+  100% {
     transform: translate(-50%, -100%);
   }
 }
@@ -82,7 +87,7 @@ h2, h3 {
       white-space: nowrap;
       transform: translate(-50%, -120%);
       pointer-events: none;
-      animation: hint-image 1s 0.25s alternate infinite;
+      animation: hint-image 6s 0.3s alternate infinite ease-out;
       z-index: 1;
     }
   }
@@ -116,10 +121,10 @@ h2, h3 {
 }
 
 @keyframes hint-partial {
-  80% {
+  85% {
     transform: rotate3d(1, 0, 0, 0deg);
   }
-  90% {
+  92.5% {
     transform: rotate3d(1, 0, 0, -15deg);
   }
   100% {
@@ -134,6 +139,10 @@ h2, h3 {
   aspect-ratio: 0.75;
   height: 120vw;
   margin: auto;
+
+  body[data-ios] & {
+    max-height: 47vh;
+  }
 
   .partials::before,
   .partials::after {
@@ -176,11 +185,11 @@ h2, h3 {
   }
 
   .image-wrap[data-hint]:not(:hover) .partials:not([data-loading]) li:first-child & {
-    animation: hint-partial 4s alternate infinite;
+    animation: hint-partial 6s alternate infinite;
   }
 
 
-  @media (max-aspect-ratio: 1) {
+  @media (max-aspect-ratio: 1/1) {
     transition: none;
 
     .partials li:active &,
@@ -357,7 +366,7 @@ h2, h3 {
     }
   }
 
-  @media (max-aspect-ratio: 1) {
+  @media (max-aspect-ratio: 1/1) {
     transform: translate(-20%, -50%);
     transition-duration: 0s;
     height: 95%;
@@ -409,7 +418,7 @@ h2, h3 {
     opacity: 1;
   }
 
-  @media (max-aspect-ratio: 1) {
+  @media (max-aspect-ratio: 1/1) {
     background: var(--white-light);
     transition-duration: 0s;
 
@@ -457,7 +466,7 @@ h2, h3 {
 .partial-alignment {
   margin-right: 1.6em;
 
-  @media (max-aspect-ratio: 1) {
+  @media (max-aspect-ratio: 1/1) {
     position: absolute;
     top: 8.8em;
     right: -5.7em;
@@ -481,7 +490,7 @@ h2, h3 {
     visibility: hidden;
     opacity: 0;
 
-    @media (max-aspect-ratio: 1) {
+    @media (max-aspect-ratio: 1/1) {
       .partials li:nth-child(odd) & {
         flex-direction: column-reverse;
       }
@@ -563,10 +572,12 @@ h2, h3 {
   top: calc(100vh - 1em);
   left: 0;
 
-  @media (max-aspect-ratio: 0.75) {
+  @media (max-aspect-ratio: 3/4) {
     top: calc(100vh - 1em - 55px);
-    // min-height: calc(100vh - 10em);
 
+    body[data-ios] & {
+      top: calc(100vh - 1em - 73px);
+    }
   }
 
   &:not(:hover)::before {
@@ -745,7 +756,7 @@ h2, h3 {
         }
       }
 
-      @media (min-aspect-ratio: 1.2) {
+      @media (min-aspect-ratio: 6/5) {
         &[data-percent="16"],
         &[data-percent="17"],
         &[data-percent="18"],
@@ -852,7 +863,7 @@ h2, h3 {
   //   outline: 5px auto;
   // }
 
-  @media (max-aspect-ratio: 0.75) {
+  @media (max-aspect-ratio: 3/4) {
     margin: 0em 1em;
   }
 
@@ -1030,7 +1041,7 @@ label[for="btn-refresh"] {
   }
 
   .save {
-    @media (max-aspect-ratio: 0.75) {
+    @media (max-aspect-ratio: 3/4) {
       font-size: 1.4em;
     }
 
@@ -1060,7 +1071,7 @@ label[for="btn-refresh"] {
     font-size: 2.24em;
   }
 
-  @media (max-aspect-ratio: 0.75) {
+  @media (max-aspect-ratio: 3/4) {
     margin-top: 0;
   }
 }
@@ -1197,11 +1208,11 @@ label[for="btn-refresh"] {
   }
 
   &[data-total="0"] {
-    h2 {
-      text-decoration: line-through;
-      text-decoration-color: var(--against);
-      text-decoration-thickness: 0.1em;
-    }
+    // h3 {
+    //   text-decoration: line-through;
+    //   text-decoration-color: var(--against);
+    //   text-decoration-thickness: 0.1em;
+    // }
 
     .policies-some {
       display: none;
