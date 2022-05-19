@@ -43,6 +43,14 @@ const coalitionParties = new Map([
 //   return useBigInt || !usingBigInt ? permutations : 2n ** 53n < permutations && permutations.toString() || Number(permutations);
 // }
 
+// much simpler factiorial
+const getPermutations = (people) => {
+  let options = 4;
+  let val = 1; 
+  while(options) val *= (people - --options)
+  return val;
+}
+
 const DEBUG = false;
 
 // comment out to enable console!
@@ -61,10 +69,12 @@ const loadDB = async () => {
 
   // const permutations = getPermutations(people.size, 4).toLocaleString();
   const names = new Map();
+  let index = 0;
   for (const [id, person] of people) {
     // allow for double-barreled names
     const name = person.name[0].replace(/-/g, '').toLowerCase();
     const list = mapGet(names, name);
+    person.index = ++index;
     person.lookup = {
       name,
       list,
@@ -137,7 +147,8 @@ const loadDB = async () => {
   console.log('PARTIES', parties);
 
   return {
-    permutations: '2,495,102,400',
+    // permutations: '2,495,102,400',
+    permutations: getPermutations(people.size).toLocaleString(),
     names,
     ids,
     people,
@@ -247,8 +258,11 @@ const refresh = (inputIds) => {
 
   const ids = getIds(inputIds);
 
+  let permutation = 1;
   for (const [i, id] of Object.entries(ids)) {
     const person = db.people.get(id);
+    permutation *= person.index;
+
     const $img = $imglist[i];
     const haspoints = person.image;
     // const defaultSrc = '/assets/whereswilma.webp'; // no women without photos yet
@@ -432,8 +446,6 @@ const refresh = (inputIds) => {
     $img.parentElement.style = style;
   }
 
-  
-
   const offsetTransformY = (topBottomTransform[1] - topBottomTransform[0]) / 4;
 
   $ol.style = `transform: translateY(${offsetTransformY * 100}%)`
@@ -441,6 +453,8 @@ const refresh = (inputIds) => {
 
   activeTitle = `${namecombo[0]} "the ${namecombo[1]}" ${namecombo[2]}-${namecombo[3]}`;
   for (const $pollie of document.querySelectorAll('.pollie')) {
+    $pollie.dataset.permutation = permutation.toLocaleString();
+    $pollie.dataset.permutations = db.permutations.toLocaleString();
     $pollie.innerText = activeTitle;
   }
 
@@ -650,7 +664,7 @@ const renderPolicies = (policies) => {
           + (bigTicketCount ? `(of course) is essentially a` : 'is really just a plain-packaged')
           + ` <span class="party-align">${majorPartiesOver25[0]}</span> stooge`)
         + ` (who enjoys a side of ${listJoinAnd(majorPartiesUnder25)})`
-      : `${bigTicketCount ? 'and enjoys' : '&hellip; despite enjoying'} `
+      : `${bigTicketCount ? 'and susbscribes to' : '&hellip; despite subscribing to'} `
         + (alignedAll
           ? 'a confused middle ground in the divine trinity of major party ideaologies'
           : 'a soggy sandwich of '
@@ -659,17 +673,22 @@ const renderPolicies = (policies) => {
               ? `<span class="party-align">${majorPartiesOver25.join('</span> and <span class="party-align">')}</span>`
               : `<span class="party-align">${majorPartiesOver25[0]}</span>`)
             + ' thinking'
-            + (majorPartiesUnder25.length ? `, with a small side of ${majorPartiesUnder25.join(' and ')}` : '')
+            + (majorPartiesUnder25.length ? ` (with a side of ${majorPartiesUnder25.join(' and ')})` : '')
             )
         + (majorPartyOther
-          ? `. And, in true style, topping things off with ${majorPartyOther.percent < 2 ? 'a wee smidge' : majorPartyOther.percent < 10 && 'measly pinch' || 'fair dollop'} of bizarre otherness`
+          ? `. And, in true Canberra style, tops things off with ${majorPartyOther.percent < 2 ? 'an efficient smidge' : majorPartyOther.percent < 10 && 'conservative pinch' || 'fair dollop'} of bizarre otherness`
           : ''),
   ).join(' ').concat('.');
 
   $description.innerHTML = description;
 }
 
-document.querySelector('.btn-refresh').addEventListener('click', () => refresh())
+document.querySelector('.btn-refresh').addEventListener('click', (e) => {
+  e.target.blur();
+  document.body.focus();
+  // alert(e.target.classList.toString());
+  refresh()
+})
 
 window.addEventListener('popstate', ({ state }) => {
   if (state && state.ids) {
@@ -679,6 +698,17 @@ window.addEventListener('popstate', ({ state }) => {
 });
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+const isIOS = [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+
 const renderImage = async (isSafariTimeWasting) => {
   const outputScale = 600 * (1 + 1 / 37.5 * 2 * 1.35) /  $image.offsetWidth;
   const dataUrl = await domtoimage.toJpeg($image, {
@@ -716,10 +746,13 @@ document.querySelector('.copy').addEventListener('click', () => {
 
 document.querySelector('.save').addEventListener('click', async () => {
   const dataUrl = await renderImage();
-    var link = document.createElement('a');
-    link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
-    link.href = dataUrl;
-    link.click();
+  const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
+  // window.open(objectUrl);
+  const link = document.createElement('a');
+  link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
+  link.href = objectUrl;
+  link.click();
+  URL.revokeObjectURL(link.href);
 });
 
 

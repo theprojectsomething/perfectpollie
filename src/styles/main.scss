@@ -20,7 +20,7 @@
 
   // party colours
   --party-alp: #e2363e;
-  --party-cln: #154e9d;
+  --party-coa: #154e9d;
   --party-nat: #006141;
   --party-grn: #008C44;
   --party-other: #fadd4a;
@@ -57,7 +57,7 @@ h2, h3 {
   @media (max-aspect-ratio: 0.75) {
     // height: calc(100vh - 55px);
     // min-height: calc(100vh - 10em);
-    margin-top: -3em;
+    margin: -3em 0 0;
   }
 }
 
@@ -70,19 +70,21 @@ h2, h3 {
 .image-wrap {
   position: relative;
 
-  &[data-hint]:not(:hover)::before {
-    content: "👇";
-    display: block;
-    border-radius: 0.2em;
-    position: absolute;
-    left: 50%;
-    top: 0.8em;
-    font-size: 2.24em;
-    white-space: nowrap;
-    transform: translate(-50%, -120%);
-    pointer-events: none;
-    animation: hint-image 1s 0.25s alternate infinite;
-    z-index: 1;
+  &[data-hint]:not(:hover) {
+    &::before {
+      content: "👇";
+      display: block;
+      border-radius: 0.2em;
+      position: absolute;
+      left: 50%;
+      top: 0.8em;
+      font-size: 2.24em;
+      white-space: nowrap;
+      transform: translate(-50%, -120%);
+      pointer-events: none;
+      animation: hint-image 1s 0.25s alternate infinite;
+      z-index: 1;
+    }
   }
 }
 
@@ -113,6 +115,17 @@ h2, h3 {
   }
 }
 
+@keyframes hint-partial {
+  80% {
+    transform: rotate3d(1, 0, 0, 0deg);
+  }
+  90% {
+    transform: rotate3d(1, 0, 0, -15deg);
+  }
+  100% {
+    transform: rotate3d(1, 0, 0, 20deg);
+  }
+}
 
 .partials {
   position: relative;
@@ -153,14 +166,19 @@ h2, h3 {
   overflow: hidden;
   height: 100%;
   
-  .partials li:active &,
-  .partials li:hover & {
+  .partials:not([data-loading]) li:active &,
+  .partials:not([data-loading]) li:hover & {
     transform: rotate3d(1, 0, 0, -25deg);
   }
   
   .partials[data-loading] & {
     transform: rotate3d(1, 0, 0, 25deg);
   }
+
+  .image-wrap[data-hint]:not(:hover) .partials:not([data-loading]) li:first-child & {
+    animation: hint-partial 4s alternate infinite;
+  }
+
 
   @media (max-aspect-ratio: 1) {
     transition: none;
@@ -261,7 +279,7 @@ h2, h3 {
   }
 
   &[data-party^="liberal"] {
-    color: var(--party-cln);
+    color: var(--party-coa);
   }
 
   &[data-party="national-party"] {
@@ -506,11 +524,11 @@ h2, h3 {
     }
     &[data-party="Coalition"] {
       order: 4;
-      color: var(--party-cln);
+      color: var(--party-coa);
     }
     &[data-party^="Liberal"] {
       order: 4;
-      color: var(--party-cln);
+      color: var(--party-coa);
     }
     &[data-party="National Party"] {
       order: 4;
@@ -551,7 +569,7 @@ h2, h3 {
 
   }
 
-  &::before {
+  &:not(:hover)::before {
     content: 'Major party alignment';
     position: absolute;
     left: 50%;
@@ -638,11 +656,11 @@ h2, h3 {
     &[data-txt="alp"] {
       color: var(--party-alp);
     }
-    &[data-txt="cln"] {
-      color: var(--party-cln);
+    &[data-txt="coa"] {
+      color: var(--party-coa);
     }
     &[data-txt^="l"] {
-      color: var(--party-cln);
+      color: var(--party-coa);
     }
     &[data-txt="nat"] {
       color: var(--party-nat);
@@ -657,9 +675,6 @@ h2, h3 {
 
       &::before {
         color: #fffa;
-        // content: attr(data-txt) ' ' attr(data-percent) '%';
-        content: attr(data-total);
-        content: attr(data-total) ' policies';
         content: attr(data-percent) '% ' attr(data-txt);
         text-transform: uppercase;
         position: absolute;
@@ -675,6 +690,7 @@ h2, h3 {
         // content: attr(data-total) ' policies';
       }
 
+      &:active,
       &:hover {
         &::before {
           color: #fff;
@@ -752,17 +768,36 @@ h2, h3 {
   font-weight: bold;
   margin: -2.2em 0 1em;
   z-index: 1;
+  position: relative;
+
+  &::after {
+    display: block;
+    position: absolute;
+    font-size: 0.5em;
+    width: 100%;
+    margin-top: 1.4em;
+    left: 0;
+    color: var(--black-light);
+    font-weight: 400;
+    content: "No. " attr(data-permutation);
+  }
+}
+
+.description-wrap {
+  width: 67vh;
+  margin: 2em 0 1em;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  // min-height: 
 }
 
 .description {
-  width: 67vh;
-  margin: 2em 0 1em;
   text-align: center;
   font-weight: 400;
-  padding: 1em;
+  padding: 0 1em;
   font-size: 1em;
   line-height: 1.8em;
-  max-width: 100%;
 
   .party-align {
     white-space: nowrap;
@@ -811,6 +846,11 @@ h2, h3 {
   border: 1px solid transparent;
   box-shadow: inset 1px 1px 0 #fffc,
               inset -1px -1px 0 var(--for-lightest);
+
+  // &[data-hint]:not(:hover) {
+  //   outline-offset: 2px;
+  //   outline: 5px auto;
+  // }
 
   @media (max-aspect-ratio: 0.75) {
     margin: 0em 1em;
@@ -870,6 +910,7 @@ h2, h3 {
       top: -1em;
       transform: translate(-50%, -110%);
       white-space: pre;
+      z-index: 1;
     }
     
     &:not(:active) .icon {
@@ -983,8 +1024,18 @@ label[for="btn-refresh"] {
 
   .copy {
     &:hover:focus::before {
-      content: 'copied';
+      content: 'Link copied';
       font-weight: 600;  
+    }
+  }
+
+  .save {
+    @media (max-aspect-ratio: 0.75) {
+      font-size: 1.4em;
+    }
+
+    span {
+      transform: translateY(-0.1em);
     }
   }
 
@@ -1015,9 +1066,7 @@ label[for="btn-refresh"] {
 }
 
 .policies-wrap {
-  padding: 0 1em 3em;
-  // max-height: calc(100vh - 4em);
-  // overflow: scroll;
+  padding: 0 1em 2em;
 }
 
 .policies {
@@ -1028,12 +1077,21 @@ label[for="btn-refresh"] {
   max-width: 100%;
   
   h2, h3 {
-    font-size:  1.2em;
     font-weight: 600;
-    margin: 1em 0;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    margin-bottom: 1.6em;
+
+    .pollie:not(:empty)::after {
+      content: '\'s';
+    }
   }
 
   h3 {
+    font-size:  1.2em;
+    margin: 1em 0;
     font-size: 1.1em;
   }
 
@@ -1054,9 +1112,10 @@ label[for="btn-refresh"] {
 }
 
 .policies-inner {
-  margin: 1em 0;
   text-align: center;
   width: 100%;
+  padding: 2.5em 0 4em;
+  border-bottom: 1px dashed var(--black-light);
 
   ul {
     margin-top: 1em;
@@ -1070,7 +1129,7 @@ label[for="btn-refresh"] {
       text-align: center;
       font-size: 0.9em;
       padding: 0.4em 1em;
-      content: 'Nothing to see here ... 🥹';
+      content: 'Nothing to see here ... 🙃';
       width: calc(50% - 0.4em);
       border: 1px solid var(--for-light);
       background: var(--for-lightest);
@@ -1214,9 +1273,12 @@ footer {
   padding: 4em;
   font-size: 0.7em;
   text-align: center;
+  line-height: 1.8em;
 
   p {
-    margin-bottom: 1em;
+    width: 86em;
+    max-width: 95%;
+    margin: 0 auto 1em;
   }
 }
 
