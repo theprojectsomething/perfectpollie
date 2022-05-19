@@ -745,11 +745,13 @@ document.querySelector('.copy').addEventListener('click', () => {
 })
 
 document.querySelector('.save').addEventListener('click', async () => {
+  const popup = isIOS && window.open('about:blank', '_blank');
+
   const dataUrl = await renderImage();
   const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
   // window.open(objectUrl);
-  if (isIOS) {
-    window.open(objectUrl);
+  if (popup) {
+    popup.location.href = objectUrl;
   } else {
     const link = document.createElement('a');
     link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
