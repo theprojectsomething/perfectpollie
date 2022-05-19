@@ -748,11 +748,15 @@ document.querySelector('.save').addEventListener('click', async () => {
   const dataUrl = await renderImage();
   const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
   // window.open(objectUrl);
-  const link = document.createElement('a');
-  link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
-  link.href = objectUrl;
-  link.click();
-  URL.revokeObjectURL(link.href);
+  if (isIOS) {
+    window.open(objectUrl);
+  } else {
+    const link = document.createElement('a');
+    link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
+    link.href = objectUrl;
+    link.click();
+  }
+  URL.revokeObjectURL(objectUrl);
 });
 
 
