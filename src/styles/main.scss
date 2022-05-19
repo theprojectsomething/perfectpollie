@@ -763,6 +763,10 @@ h2, h3 {
   font-size: 1em;
   line-height: 1.8em;
   max-width: 100%;
+
+  .party-align {
+    white-space: nowrap;
+  }
 }
 
 @keyframes hint-button {
@@ -1037,15 +1041,10 @@ label[for="btn-refresh"] {
     display: flex;
     flex-direction: column;
     gap: 0.4em;
-
-    small {
-      font-size: 0.85em;
-      font-weight: 600;
-    }
   }
 
   p {
-    font-size: 0.7em;
+    font-size: 0.9em;
   }
   
   summary::first-letter,
@@ -1060,18 +1059,29 @@ label[for="btn-refresh"] {
   width: 100%;
 
   ul {
+    margin-top: 1em;
     gap:  0.4em;
     flex-direction: row;
     flex-wrap: wrap;
     text-align: left;
     justify-content: center;
+
+    &:empty::before {
+      text-align: center;
+      font-size: 0.9em;
+      padding: 0.4em 1em;
+      content: 'Nothing to see here ... 🥹';
+      width: calc(50% - 0.4em);
+      border: 1px solid var(--for-light);
+      background: var(--for-lightest);
+    }
   }
 
   > p {
-    border: 1px solid var(--for-light);
+    // border: 1px solid var(--for-light);
     border-radius: 0.2em;
-    padding: 0.6em 1em;
-    background: var(--for-lightest);
+    // padding: 0.6em 1em;
+    // background: var(--for-lightest);
     margin: 0 auto 1em;
     width: 60em;
     max-width: 95%;
@@ -1086,7 +1096,8 @@ label[for="btn-refresh"] {
     }
 
     &.is-for {
-      background: var(--for-lighter);
+      background: var(--for-lightest);
+      border: 1px solid var(--for-light);
     
       summary::before {
         content: 'For ';
@@ -1094,11 +1105,23 @@ label[for="btn-refresh"] {
     }
 
     &.is-against {
-      background: var(--against-lighter);
+      background: var(--against-lightest);
+      border: 1px solid var(--against-light);
 
       summary::before {
         content: 'Against ';
       }
+    }
+  }
+
+  details p {
+    margin-top: 0.4em;
+
+    small {
+      font-size: 0.85em;
+      margin-top: 0.4em;
+      display: block;
+      font-weight: 600;
     }
   }
 
@@ -1131,10 +1154,10 @@ label[for="btn-refresh"] {
 }
 
 .what-what-what {
-  border: 1px solid var(--for-light);
-  border-radius: 0.2em;
-  padding: 0.6em 2em 2em;
-  background: var(--for-lightest);
+  // border: 1px solid var(--for-light);
+  // border-radius: 0.2em;
+  padding: 0 1em 2em;
+  // background: var(--for-lightest);
   margin: 0 auto 1em;
   width: 60em;
   max-width: 95%;
@@ -1148,7 +1171,7 @@ label[for="btn-refresh"] {
 
   ul {
     list-style: initial;
-    font-size: 0.8em;
+    font-size: 0.9em;
     text-align: left;
     margin-bottom: 1em;
 
@@ -1158,7 +1181,7 @@ label[for="btn-refresh"] {
   }
 
   ol {
-    list-style: initial;
+    list-style: decimal;
   }
 
   li:not(:last-child) {
@@ -1167,6 +1190,10 @@ label[for="btn-refresh"] {
 
   a small {
     font-size: 0.7em;
+  }
+
+  .footer {
+    margin-top: 2em;
   }
 }
 

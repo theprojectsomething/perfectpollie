@@ -15,6 +15,12 @@ const majorParties = new Set([
   'Liberal-National Coalition'
 ]);
 
+const majorPartiesFoodMap = new Map([
+  ['Australian Greens', 'brocolli'],
+  ['Australian Labor Party', 'tomatoes'],
+  ['Liberal-National Coalition', 'blueberries'],
+]);
+
 const coalitionParties = new Map([
   ['National Party', 'Liberal-National Coalition'],
   ['Liberal Party', 'Liberal-National Coalition'],
@@ -469,6 +475,13 @@ const getEmailHref = (title) => {
   return `mailto:?subject=${encodeURIComponent('found the the perfect pollie')}&body=${bodyEncoded}`;
 }
 
+const listJoinAnd = (list) => {
+  if (list.length <= 2) {
+    return list.join(' and ');
+  }
+  return list.slice(0, -2).join(', ').concat(', ', list.slice(-2).join(' and '));
+}
+
 
 const $policiesBigTicket = document.querySelector('.policies-bigticket');
 const $policiesForBigTicket = document.querySelector('.policies-for-bigticket');
@@ -551,7 +564,7 @@ const renderPolicies = (policies) => {
     }
 
     const list = mapGet(counts, agreement.count);
-    const names = [].concat(agreement.people.names.splice(-2, 2).join(' and '), agreement.people.names.splice(-2, 2).join(', ') || []).reverse().join(', ');
+    const names = listJoinAnd(agreement.people.names);
     const decisionAgree = agreement.count > 1 ? 'agree' : 'agrees';
     const decisionDisagree = agreement.count > 1 ? 'do not agree' : 'does not agree';
     list.push(`<li class="${avg ? 'is-for' : 'is-against'}">
@@ -571,6 +584,7 @@ const renderPolicies = (policies) => {
   let majorPartyClosestAlignment;
   let majorPartyTotalPercentRounded = 0;
   const majorPartiesOver25 = [];
+  const majorPartiesUnder25 = [];
   for (const [majorPartyName, majorParty] of alignmentMajor) {
     majorParty.percent = 100 * majorParty.score / alignmentMajorTotal;
     majorParty.percentRounded = Math.ceil(majorParty.percent);
@@ -579,9 +593,12 @@ const renderPolicies = (policies) => {
       || majorParty.score > majorPartyClosestAlignment.score) {
       majorPartyClosestAlignment = majorParty;
     }
-    if (majorParty.percent >= 25
-      && (majorPartyName !== 'Other' || majorParty.percent > 75)) {
-      majorPartiesOver25.push(majorPartyName);
+    if (majorPartyName !== 'Other' || majorParty.percent > 75) {
+      if (majorParty.percent >= 25) {
+        majorPartiesOver25.push(majorPartyName);
+      } else if (majorParty.percent > 10) {
+        majorPartiesUnder25.push(majorPartiesFoodMap.get(majorPartyName));
+      }
     }
   }
   majorPartyClosestAlignment.percentRounded += 100 - majorPartyTotalPercentRounded;
@@ -630,17 +647,22 @@ const renderPolicies = (policies) => {
       ?  (majorPartiesOver25[0] === 'Other'
         ? 'and is essentially a bizarre non-conformist'
         : `${bigTicketCount < 5 ? '&hellip; and' : 'but'} `
-          + (bigTicketCount ? `(of course) is essentially a` : 'is really just a confused')
-          + ` ${majorPartiesOver25[0]} stooge`)
-      : `${bigTicketCount ? 'and enjoys' : '&hellip; despite enjoying'} an (admittedly `
+          + (bigTicketCount ? `(of course) is essentially a` : 'is really just a plain-packaged')
+          + ` <span class="party-align">${majorPartiesOver25[0]}</span> stooge`)
+        + ` (who enjoys a side of ${listJoinAnd(majorPartiesUnder25)})`
+      : `${bigTicketCount ? 'and enjoys' : '&hellip; despite enjoying'} `
         + (alignedAll
-          ? 'questionable) alignment with all the major parties'
-          : 'clammy) alignment with '
+          ? 'a confused middle ground in the divine trinity of major party ideaologies'
+          : 'a soggy sandwich of '
             + (majorPartiesOver25.length > 1
-              ? `${majorPartiesOver25.length} of the ${majorParties.size} major parties`
-              : `the ${majorPartiesOver25[0]}`))
+              // ? `${majorPartiesOver25.length} of the ${majorParties.size} major parties`
+              ? `<span class="party-align">${majorPartiesOver25.join('</span> and <span class="party-align">')}</span>`
+              : `<span class="party-align">${majorPartiesOver25[0]}</span>`)
+            + ' thinking'
+            + (majorPartiesUnder25.length ? `, with a small side of ${majorPartiesUnder25.join(' and ')}` : '')
+            )
         + (majorPartyOther
-          ? `, topped off with ${majorPartyOther.percent < 2 ? 'a wee smidge' : majorPartyOther.percent < 10 && 'measly pinch' || 'fair dollop'} of bizarre otherness`
+          ? `. And, in true style, topping things off with ${majorPartyOther.percent < 2 ? 'a wee smidge' : majorPartyOther.percent < 10 && 'measly pinch' || 'fair dollop'} of bizarre otherness`
           : ''),
   ).join(' ').concat('.');
 
