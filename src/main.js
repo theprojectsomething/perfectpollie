@@ -596,8 +596,10 @@ const renderPolicies = (policies) => {
   console.log('POLICY ALIGNMENT MAJOR', alignmentMajorTotal, alignmentMajor);
 
   let majorPartyClosestAlignment;
+  let majorPartyClosestAlignmentName;
   let majorPartyTotalPercentRounded = 0;
   const majorPartiesOver25 = [];
+  const majorPartiesOver25Food = [];
   const majorPartiesUnder25 = [];
   for (const [majorPartyName, majorParty] of alignmentMajor) {
     majorParty.percent = 100 * majorParty.score / alignmentMajorTotal;
@@ -606,10 +608,12 @@ const renderPolicies = (policies) => {
     if (!majorPartyClosestAlignment
       || majorParty.score > majorPartyClosestAlignment.score) {
       majorPartyClosestAlignment = majorParty;
+      majorPartyClosestAlignmentName = majorPartyName;
     }
-    if (majorPartyName !== 'Other' || majorParty.percent > 75) {
+    if (majorPartyName !== 'Other' || majorParty.percent > 60) {
       if (majorParty.percent >= 25) {
         majorPartiesOver25.push(majorPartyName);
+        majorPartiesOver25Food.push(majorPartiesFoodMap.get(majorPartyName));
       } else if (majorParty.percent > 10) {
         majorPartiesUnder25.push(majorPartiesFoodMap.get(majorPartyName));
       }
@@ -659,13 +663,13 @@ const renderPolicies = (policies) => {
     bigTicketCount ? 'has' : 'has the look, but doesn\'t have any',
     bigTicketCount > 5 ? 'any number of' : bigTicketCount || [],
     `<a href="#big-ticket-policies">big ticket ${bigTicketCount === 1 ? 'policy' : 'policies'}</a>`,
-    majorPartyClosestAlignment.percent >= 75
-      ?  (majorPartiesOver25[0] === 'Other'
+    majorPartyClosestAlignment.percent >= 60
+      ?  (majorPartyClosestAlignmentName === 'Other'
         ? 'and is essentially a bizarre non-conformist'
         : `${bigTicketCount < 5 ? '&hellip; and' : 'but'} `
           + (bigTicketCount ? `(of course) is essentially a` : 'is really just a plain-packaged')
-          + ` <span class="party-align">${majorPartiesOver25[0]}</span> stooge`)
-        + ` (who enjoys a side of ${listJoinAnd(majorPartiesUnder25)})`
+          + ` <span class="party-align">${majorPartyClosestAlignmentName.replace(/Australian | Party/g, '')}</span> party stooge`)
+        + ` who enjoys a side of ${listJoinAnd(majorPartiesOver25Food.filter(p => p !== majorPartiesFoodMap.get(majorPartyClosestAlignmentName)).concat(majorPartiesUnder25))}`
       : `${bigTicketCount ? 'and susbscribes to' : '&hellip; despite subscribing to'} `
         + (alignedAll
           ? 'a confused middle ground in the divine trinity of major party ideaologies'
@@ -678,7 +682,7 @@ const renderPolicies = (policies) => {
             + (majorPartiesUnder25.length ? ` (with a side of ${majorPartiesUnder25.join(' and ')})` : '')
             )
         + (majorPartyOther
-          ? `. And, in true Canberra style, tops things off with ${majorPartyOther.percent < 2 ? 'an efficient smidge' : majorPartyOther.percent < 10 && 'conservative pinch' || 'fair dollop'} of bizarre otherness`
+          ? `. And, in true Canberra style, tops things off with a ${majorPartyOther.percent < 2 ? 'smidge' : majorPartyOther.percent < 10 && 'pinch' || 'dollop'} of bizarre otherness`
           : ''),
   ).join(' ').concat('.');
 
