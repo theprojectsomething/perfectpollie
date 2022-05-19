@@ -745,6 +745,7 @@ document.querySelector('.copy').addEventListener('click', () => {
 })
 
 document.querySelector('.save').addEventListener('click', async () => {
+  // if iOS device let's work around the weird download fun
   const popup = isIOS && window.open('about:blank', '_blank');
 
   const dataUrl = await renderImage();
