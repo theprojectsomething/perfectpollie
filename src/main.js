@@ -749,17 +749,17 @@ document.querySelector('.save').addEventListener('click', async () => {
   const popup = isIOS && window.open('about:blank', '_blank');
 
   const dataUrl = await renderImage();
-  const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
+  // const objectUrl = await fetch(dataUrl).then(e => e.blob()).then(e => URL.createObjectURL(e));
   // window.open(objectUrl);
   if (popup) {
-    popup.location.href = objectUrl;
+    popup.location.href = dataUrl;
   } else {
     const link = document.createElement('a');
     link.download = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
-    link.href = objectUrl;
+    link.href = dataUrl;
     link.click();
   }
-  URL.revokeObjectURL(objectUrl);
+  // URL.revokeObjectURL(objectUrl);
 });
 
 
