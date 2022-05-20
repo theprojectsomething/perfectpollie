@@ -17,7 +17,7 @@ const majorParties = new Set([
 ]);
 
 const majorPartiesFoodMap = new Map([
-  ['Australian Greens', 'brocolli'],
+  ['Australian Greens', 'broccoli'],
   ['Australian Labor Party', 'tomatoes'],
   ['Liberal-National Coalition', 'blueberries'],
 ]);
