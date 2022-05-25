@@ -53,7 +53,6 @@ export default {
 
     let asset = env.ASSETS.fetch(request);
     if (/\/[^.\/]+$/.test(url.pathname)) {
-      // return new Response(`Image: ${url.pathname.replace(/.*\//, '')}`);
       const response = await asset;
       if (response.headers.get('content-type') === 'text/html') {
         let html = await response.text();
@@ -85,6 +84,11 @@ export default {
           doCache(new Response(html, response));
         }
       }
+    } else if (url.pathname === '/') {
+      const response = await asset;
+      let html = await response.text();
+      html = html.replace('<html', '$& data-default')
+      asset = new Response(html, response);
     }
 
     // Otherwise, serve the static assets.
