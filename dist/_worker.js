@@ -60,9 +60,9 @@ export default {
         let cache = true;
         const imageUrl = getImageUrl(url.pathname);
         if (imageUrl) {
-          const exists = true;
-          // const exists = await fetch(`${storageUrl}/${imageUrl}`, { method: 'HEAD' })
-          // .then(e => e.status === 200).catch(() => false);
+          // const exists = true;
+          const exists = await fetch(`${storageUrl}/${imageUrl}`, { method: 'HEAD' })
+          .then(e => e.status === 200).catch(() => false);
           
           if (exists) {
             html = html.replace(/(<meta.*?image" content=")[^"]+/g, `$1https://perfectpollie.au/images/${imageUrl}`);
@@ -81,11 +81,10 @@ export default {
           html = html.replace(/(class="[^"]*pollie(?:"| )[^>]*>)[^<]*/g, `$1${imageTitle}`);
         }
 
-        // if (imageUrl || imageTitle) {
+        if (imageTitle || (imageUrl && cache)) {
           html = html.replace('<html', '$& data-custom');
-        // }
-
-        asset = new Response(html, response);
+          asset = new Response(html, response);
+        }
 
         if (imageUrl && imageTitle && cache) {
           doCache(new Response(html, response));
