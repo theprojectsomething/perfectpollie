@@ -54,8 +54,9 @@ export default {
     let asset = env.ASSETS.fetch(request);
     if (/\/[^.\/]+$/.test(url.pathname)) {
       const response = await asset;
-      if (response.headers.get('content-type') === 'text/html') {
-        let html = await response.text();
+      let html = await response.text();
+      // if (response.headers.get('content-type') === 'text/html') {
+      if (html.startsWith('<!DOCTYPE html>')) {
         let cache = true;
         const imageUrl = getImageUrl(url.pathname);
         if (imageUrl) {
