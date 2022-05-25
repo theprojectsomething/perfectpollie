@@ -54,13 +54,13 @@ export default {
     let asset = env.ASSETS.fetch(request);
     if (/\/[^.\/]+$/.test(url.pathname)) {
       const response = await asset;
-      let html = await response.text();
-      // if (response.headers.get('content-type') === 'text/html') {
+      let html = await response.text().catch(() => '');
+      
+      // content-type tests fail so we'll check the content itself
       if (html.startsWith('<!DOCTYPE html>')) {
         let cache = true;
         const imageUrl = getImageUrl(url.pathname);
         if (imageUrl) {
-          // const exists = true;
           const exists = await fetch(`${storageUrl}/${imageUrl}`, { method: 'HEAD' })
           .then(e => e.status === 200).catch(() => false);
           
@@ -73,10 +73,12 @@ export default {
 
         const imageTitle = getImageTitle(url.pathname);
         if (imageTitle) {
+          // canonical url
+          html = html.replace(/(<meta.*?:url" content=")[^"]+/g, `$1${url.origin + url.pathname}`);
           // meta tags
-          html = html.replace(/(<meta.*?(?:title|"name)" content=")[^"]+/g, `$1${imageTitle}`);
+          html = html.replace(/(<meta.*?(?:title|"name)" content=")[^"]+/g, `$1${imageTitle} | Perfect 💔 Pollie`);
           // title tag
-          html = html.replace(/(<title>)[^<]+/g, `$1${imageTitle} | Perfect ❤ Pollie`);
+          html = html.replace(/(<title>)[^<]+/g, `$1${imageTitle} | Perfect 💔 Pollie`);
           // document references
           html = html.replace(/(class="[^"]*pollie(?:"| )[^>]*>)[^<]*/g, `$1${imageTitle}`);
         }
