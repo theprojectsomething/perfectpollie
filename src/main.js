@@ -536,10 +536,7 @@ const refresh = (inputIds) => {
 
 const getTwitterHref = () => {
   const url = new URL('https://twitter.com/intent/tweet');
-  url.searchParams.set('text', `Perfect Pollie No. ${activePermutation.toLocaleString()} ...\n\n`);
-  url.searchParams.set('hashtags', 'auspol,PerfectPollie');
-  url.searchParams.set('url', location.origin + location.pathname);
-  url.searchParams.set('via', 'PerfectPollie');
+  url.searchParams.set('text', `#PerfectPollie No. ${activePermutation.toLocaleString()} ...\n${activeTitle}\n\n${location.origin + location.pathname}\n#auspol`);
   return url;
 }
 
