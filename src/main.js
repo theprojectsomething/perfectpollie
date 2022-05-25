@@ -4,6 +4,8 @@ import "@/styles/main.scss"
 import domtoimage from 'dom-to-image'
 import { saveAs } from 'file-saver'
 
+const int = self;
+
 const gooduns = [
   '#david-the-tony-tony-joanne',
 ];
@@ -54,8 +56,21 @@ const getPermutations = (people) => {
 
 const DEBUG = false;
 
-// comment out to enable console!
-const console = new Proxy(window.console, { get() { return () => {} } });
+// override the console ... `console.enabled = true|false` to toggle
+const console = new Proxy(window.console, {
+  enabled: false,
+  get(target, prop) {
+    if (prop === 'enabled') {
+      return this.enabled;
+    }
+    return this.enabled || prop === 'error' ? Reflect.get(...arguments) : () => {};
+  },
+  set(target, prop, value) {
+    if (prop === 'enabled') {
+      return (this.enabled = !!value) || true;
+    }
+  }
+});
 
 const mapGet = (map, key, defaultValue=[]) =>
   map.get(key) ?? (map.set(key, defaultValue) && defaultValue);
@@ -208,10 +223,15 @@ const height = 300 / 800;
 
 let activeTitle;
 let activeUrl;
+let activeIds;
+let activeImg;
+let activePermutation;
 let ready = 0;
+let modalWaiting;
+let saveWaiting;
 const $description = document.querySelector('.description');
 const $twitter = document.querySelector('.twitter');
-const $email = document.querySelector('.email');
+// const $email = document.querySelector('.email');
 const $ol = document.querySelector('.partials');
 const $imglist = document.querySelectorAll('.partial-image');
 const $infolist = document.querySelectorAll('.info');
@@ -219,6 +239,11 @@ const onimg = (e) => {
   if (++ready >= $imglist.length) {
     setTimeout(() => {
       delete $ol.dataset.loading;
+      if (modalWaiting) {
+        showModal();
+      } else if (saveWaiting) {
+        saveImage();
+      }
     }, 500);
   }
 }
@@ -233,8 +258,6 @@ const onimgerror = (e) => {
   e.target.src = '/assets/whereswilma.webp';
 }
 
-$ol.addEventListener('load', onimg, true);
-$ol.addEventListener('error', onimgerror, true);
 
 const getIds = (ids=[]) => {
   const list = [];
@@ -245,6 +268,31 @@ const getIds = (ids=[]) => {
     }
   }
   return list;
+}
+
+const refreshByName = (...input) => {
+  const ids = [];
+  const names = new Map(input.map((name, i) => [name.toLowerCase(), i]));
+  for (const [id, person] of db.people) {
+    const name = person.name.join(' ').toLowerCase();
+    let found;
+    for (const [search, index] of names) {
+      if (name.startsWith(search)) {
+        found = search;
+        ids[index] = id;
+        break;
+      }
+    }
+    if (found) {
+      names.delete(found);
+      if (!names.size) {
+        break;
+      }
+    }
+  }
+  if (ids.length) {
+    refresh(ids.filter(id => id));
+  }
 }
 
 const refresh = (inputIds) => {
@@ -259,10 +307,10 @@ const refresh = (inputIds) => {
 
   const ids = getIds(inputIds);
 
-  let permutation = 1;
+  activePermutation = 1;
   for (const [i, id] of Object.entries(ids)) {
     const person = db.people.get(id);
-    permutation *= person.index;
+    activePermutation *= person.index;
 
     const $img = $imglist[i];
     const haspoints = person.image;
@@ -454,38 +502,48 @@ const refresh = (inputIds) => {
 
   activeTitle = `${namecombo[0]} "the ${namecombo[1]}" ${namecombo[2]}-${namecombo[3]}`;
   for (const $pollie of document.querySelectorAll('.pollie')) {
-    $pollie.dataset.permutation = permutation.toLocaleString();
+    $pollie.dataset.permutation = activePermutation.toLocaleString();
     $pollie.dataset.permutations = db.permutations.toLocaleString();
     $pollie.innerText = activeTitle;
   }
 
   activeUrl = urlGenerate(...ids);
+  activeImg = `${activeUrl.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
+  activeIds = ids;
+
+  const isModalHash = location.hash === modalHash ? location.hash : '';
 
   if (history.state && history.state.ids && history.state.ids.join('') !== ids.join('')) {
     console.log('PUSH STATE!', history.state, activeUrl);
     // previously updated
-    history.pushState({ ids }, '', activeUrl)
+    history.pushState({ ids }, '', activeUrl + isModalHash);
   } else {
     console.log('REPLACE STATE!');
 
     // first run ... we'll replace the url to be sure
-    history.replaceState({ ids }, '', activeUrl)
+    history.replaceState({ ids }, '', activeUrl + isModalHash);
+    if (isModalHash) {
+      modalWaiting = true;
+    }
   }
 
-  $twitter.href = getTwitterHref(activeTitle);
-  $email.href = getEmailHref(activeTitle);
+  $twitter.href = getTwitterHref();
+  // $email.href = getEmailHref();
 
   renderPolicies(policies);
+  document.body.dataset.refreshed = 1;
 }
 
-const getTwitterHref = (title) => {
+const getTwitterHref = () => {
   const url = new URL('https://twitter.com/intent/tweet');
-  url.searchParams.set('text', `${title} is truly the Perfect ❤️ Pollie`);
+  url.searchParams.set('text', `Perfect Pollie No. ${activePermutation.toLocaleString()} ...\n\n`);
+  url.searchParams.set('hashtags', 'auspol,PerfectPollie');
   url.searchParams.set('url', location.origin + location.pathname);
+  url.searchParams.set('via', 'PerfectPollie');
   return url;
 }
 
-const getEmailHref = (title) => {
+const getEmailHref = () => {
   const bodyEncoded = encodeURIComponent(`Hey I found the the Perfect Pollie -\n\n${location.origin + location.pathname}\n\nLove ya guts!`)
   return `mailto:?subject=${encodeURIComponent('found the the perfect pollie')}&body=${bodyEncoded}`;
 }
@@ -662,14 +720,16 @@ const renderPolicies = (policies) => {
   const description = [`<i>${activeTitle}</i>`].concat(
     bigTicketCount ? 'has' : 'has the look, but doesn\'t have any',
     bigTicketCount > 5 ? 'any number of' : bigTicketCount || [],
-    `<a href="#big-ticket-policies">big ticket ${bigTicketCount === 1 ? 'policy' : 'policies'}</a>`,
+    `<a href="#policy-platform">big ticket ${bigTicketCount === 1 ? 'policy' : 'policies'}</a>`,
     majorPartyClosestAlignment.percent >= 60
       ?  (majorPartyClosestAlignmentName === 'Other'
         ? 'and is essentially a bizarre non-conformist'
         : `${bigTicketCount < 5 ? '&hellip; and' : 'but'} `
           + (bigTicketCount ? `(of course) is essentially a` : 'is really just a plain-packaged')
           + ` <span class="party-align">${majorPartyClosestAlignmentName.replace(/Australian | Party/g, '')}</span> party stooge`)
-        + ` who enjoys a side of ${listJoinAnd(majorPartiesOver25Food.filter(p => p !== majorPartiesFoodMap.get(majorPartyClosestAlignmentName)).concat(majorPartiesUnder25))}`
+        + (majorPartiesOver25.length > 1 || majorPartiesUnder25.length
+          ? ` who enjoys a side of ${listJoinAnd(majorPartiesOver25Food.filter(p => p !== majorPartiesFoodMap.get(majorPartyClosestAlignmentName)).concat(majorPartiesUnder25))}`
+          : '')
       : `${bigTicketCount ? 'and susbscribes to' : '&hellip; despite subscribing to'} `
         + (alignedAll
           ? 'a confused middle ground in the divine trinity of major party ideaologies'
@@ -697,7 +757,9 @@ document.querySelector('.btn-refresh').addEventListener('click', (e) => {
 })
 
 window.addEventListener('popstate', ({ state }) => {
-  if (state && state.ids) {
+  if ($dialog.open) {
+    // $dialog.close();
+  } else if (state && state.ids) {
     refresh(state.ids);
   }
   console.log('POPSTATE', state);
@@ -721,6 +783,7 @@ if (isIOS) {
 
 const renderImage = async (isSafariTimeWasting) => {
   const outputScale = 600 * (1 + 1 / 37.5 * 2 * 1.35) /  $image.offsetWidth;
+  document.body.dataset.render = 1;
   const dataUrl = await domtoimage.toJpeg($image, {
     width: $image.offsetWidth * outputScale,
     height: $image.offsetHeight * outputScale,
@@ -729,6 +792,7 @@ const renderImage = async (isSafariTimeWasting) => {
     },
     bgcolor: '#fff',
   });
+  delete document.body.dataset.render;
   // safari (yay) doesn't load images on the first go
   // probably "smarter" ?? ... anyway, let's try again
   if (isSafari && !isSafariTimeWasting) {
@@ -746,20 +810,141 @@ for (const $hint of document.querySelectorAll('[data-hint]')) {
 
 const $image = document.querySelector('.image');
 
-document.querySelector('.copy').addEventListener('click', () => {
+// document.querySelector('.copy').addEventListener('focusin', (e) => {
+//   console.log('button!')
+//   e.preventDefault();
+//   e.stopPropagation();
+//   e.stopImmediatePropagation();
+//   navigator.clipboard.writeText(location.origin + location.pathname).then(() => {
+//     console.log('saved!')
+//   }, () => {
+//     console.log('whoops!')
+//   });
+// })
+
+// document.querySelector('.dialog-actions > button').addEventListener('click', (e) => {
+//   console.log('button!')
+//   // e.preventDefault();
+//   e.stopPropagation();
+// }, true)
+
+// document.querySelector('.dialog-actions > button a').addEventListener('click', (e) => {
+//   console.log('anchor!')
+//   e.preventDefault();
+// })
+
+// document.querySelector('dialog .link-wrap').addEventListener('click', (e) => {
+//   console.log('label!')
+//   e.preventDefault();
+//   e.stopPropagation();
+// }, true)
+
+// document.querySelector('dialog .link-wrap a').addEventListener('click', (e) => {
+//   console.log('anchor!')
+//   e.preventDefault();
+// })
+
+// https://css-tricks.com/how-to-implement-and-style-the-dialog-element/
+const $dialog = document.querySelector('.dialog');
+const $dialogimg = $dialog.querySelector('img');
+const $dialoglinkwrap = $dialog.querySelector('.link-wrap');
+const $dialoglink = $dialog.querySelector('.link');
+const modalHash = '#perfect';
+$dialoglinkwrap.addEventListener('click', (e) => {
+  delete $dialoglinkwrap.dataset;
+  e.preventDefault();
+  e.stopPropagation();
   navigator.clipboard.writeText(location.origin + location.pathname).then(() => {
+    $dialoglinkwrap.dataset.copied = 1;
     console.log('saved!')
   }, () => {
     console.log('whoops!')
   });
-})
+}, true);
 
-document.querySelector('.save').addEventListener('click', async () => {
-  const dataUrl = await renderImage();
-  const title = `${location.pathname.slice(1).replace(/([^\/]+)\/(.*)$/, '$2-$1')}.jpg`;
-  saveAs(dataUrl, title);
+const $dialogclose = $dialog.querySelector('.dialog-actions .close').addEventListener('click', () => $dialog.close());
+// document.querySelector('.love').addEventListener('click', async () => {
+const showModal = async () => {
+  modalWaiting = false;
+  document.body.dataset.modal = 1;
+  $dialog.classList.toggle('ready', false);
+  $dialogimg.src = '';
+  $dialoglink.href = location.origin + location.pathname;
+  $dialoglink.innerText = location.host + location.pathname;
+  
+  if (!$dialog.open) {
+    $dialog.showModal();
+  }
+
+  if (ready < $imglist.length) {
+    return modalWaiting = true;
+  }
+
+  // console.log('SAVE!')
+  const dataUrl = await saveImage();
+
+  $dialogimg.src = dataUrl;
+  $dialog.classList.toggle('ready', true);
+};
+
+document.querySelector('.download').addEventListener('click', () => {
+  saveAs($dialogimg.src, activeImg);
 });
 
+
+const renderList = new Set();
+
+const saveImage = async () => {
+  saveWaiting = false;
+
+  const dataUrl = await renderImage();
+
+  if (renderList.has(activeImg)) {
+    return dataUrl;
+  }
+
+  let exists = await fetch(`/images/${activeImg}`, { method: 'HEAD' })
+    .then(e => e.status === 200)
+    .catch(e => console.log(e) || 0);
+
+  if (!exists) {
+    exists = await fetch(`/images/${activeImg}`, {
+      method: 'PUT',
+      body: await fetch(dataUrl).then(e => e.blob()),
+    }).then(e => e.status === 200)
+    .catch(e => console.log('error', e) || 0);
+  }
+
+  // don't try to render this image again
+  renderList.add(activeImg);
+  console.log({ activeImg, exists });
+
+  return dataUrl;
+
+}
+
+$dialog.addEventListener('close', () => {
+  delete document.body.dataset.modal;
+  // history.replaceState({ ids: activeIds }, '', activeUrl);
+  if (location.hash === modalHash) {
+    history.back();
+  }
+
+  // location.hash = '';
+});
+
+
+window.addEventListener('hashchange', ({ newURL, oldURL }) => {
+  console.log('The hash has changed!', { newURL, oldURL }, history.state);
+  if (newURL.endsWith(modalHash)) {
+    showModal();
+  } else if (oldURL.endsWith(modalHash)) {
+    $dialog.close();
+  }
+  history.replaceState({ ids: activeIds }, '', window.location.href);
+}, false);
+
+// $dialog.addEventListener('close')
 
 if (DEBUG) {
   document.body.dataset.debug = true;
@@ -772,8 +957,25 @@ const init = async () => {
   if ($combos) {
     $combos.innerText = db.permutations;
   }
+  $ol.addEventListener('load', onimg, true);
+  $ol.addEventListener('error', onimgerror, true);
+
   const urlIds = urlParseIds(location.pathname);
   refresh(urlIds);
+  if (urlIds && urlIds.length) {
+    const imgMetaTag = document.querySelector('head meta[name="image"]');
+    if (imgMetaTag && !imgMetaTag.content.endsWith(activeImg)) {
+      saveWaiting = true;
+      console.log('Image needs update!', imgMetaTag.content, activeImg);
+    } else {
+      renderList.add(activeImg);
+    }
+  }
 }
+
+// ahem
+int[[1101000,1000000,1100011,1101011,1110100,1101000,
+110011,1101101,1100001,1110100,1110010,110001,1111000]
+  .reduce((_, x) => _ += String.fromCharCode(parseInt(x, 2)), '')] = { db: () => db, refresh, refreshByName, console };
 
 init();

@@ -9,3 +9,4 @@ data/images/models
 data/theyvoteforyou.key
 node_modules
 vite.config.local.js
+.mf
